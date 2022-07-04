@@ -25,7 +25,7 @@ $(document).ready(function(){
 		
 		try {
 			
-			const resp = await axios.get(`http://192.168.1.63:8001/api/orders?reference=${idCompra}`);
+			const resp = await axios.get(`http://localhost/api/orders?reference=${idCompra}`);
 			
 			const orders = resp.data;
 			
