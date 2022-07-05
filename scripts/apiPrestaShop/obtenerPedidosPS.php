@@ -8,7 +8,7 @@ header('Access-Control-Allow-Origin: *');
 try {
 	$sku='';
 	   // creating webservice access
-	   $webService = new PrestaShopWebservice('https://www.vicencioperfumerias.cl/clonvic','AKZZU9AGZNEW47C8SB6TGB3HJYA5GJF5', false); // se crea conexion
+	   $webService = new PrestaShopWebservice('https://www.vicencioperfumerias.cl/iquique','AKZZU9AGZNEW47C8SB6TGB3HJYA5GJF5', false); // se crea conexion
 		$xml = $webService->get(array('resource' => 'orders')); // se genera una variable que obtiene los datos del xml entero de ordenes
 		$opt = array(
 			'resource'=>'orders',
