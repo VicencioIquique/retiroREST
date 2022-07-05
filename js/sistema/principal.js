@@ -9,7 +9,7 @@ var tablaProdVFinal = [];
 var tablaProdIDPreventa = [];
 var tablaProdNum = [];
 var bodega ='009'; // bodega para Punto Retiro
-var workstation ='5';
+var workstation ='3';
 var comprobacionBoleta =false;
 var tipoPagoBoleta; // para identificar en la impresion de la boleta si es credito 3 o debito 4
 var fechaCreacion;
@@ -25,7 +25,7 @@ $(document).ready(function(){
 		
 		try {
 			
-			const resp = await axios.get(`http://192.168.3.41:8001/api/orders?reference=${idCompra}`);
+			const resp = await axios.get(`http://192.168.3.41:8008/api/orders?reference=${idCompra}`);
 			
 			const orders = resp.data;
 			

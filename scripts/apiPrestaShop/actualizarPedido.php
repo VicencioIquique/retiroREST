@@ -2,7 +2,7 @@
 	require ('libreriaPresta.php'); // se llama libreria prestashop WEBService
 	$id = $_POST['idCompra']; // CODIGO ALFANUMERICO DE PEDIDO (NO ES EL NUMERO DE PEDIDO)
 	try{
-		$webService = new PrestaShopWebservice('www.vicencioperfumerias.cl/clonvic','AKZZU9AGZNEW47C8SB6TGB3HJYA5GJF5', false); // se crea conexion
+		$webService = new PrestaShopWebservice('www.vicencioperfumerias.cl/iquique','AKZZU9AGZNEW47C8SB6TGB3HJYA5GJF5', false); // se crea conexion
 		$opt = array(
 			'resource'=>'orders',
 			'display'=>'full',
