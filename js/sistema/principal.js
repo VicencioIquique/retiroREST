@@ -40,89 +40,96 @@ $(document).ready(function(){
 				$("#gif").hide();
 			}else{
 				let rutFormat = formatearRut(direccion.dni);
-				if (detalle[0].product_ean13 == null) {
-					alert("Error al obtener Productos");
-					$("#gif").hide();
-				}else{
-					limpiarTabla();
-					// Cliente y Direccion
-					$("#lblRut").text(rutFormat);
-					$("#lblNombre").text(direccion.firstname + " " + direccion.lastname);
-					$("#lblCiudad").text(direccion.city);
-					$("#lblDireccion").text(direccion.address1);
-					$("#lblEmail").text(cliente.email);
-					$("#lblFono").text(direccion.vat_number);
-
-					//Pagos
-
-					if(pago.paymentTypeCode=='VD'|| pago.paymentTypeCode=='' ){
-						$("#tipoTarjeta").text("Debito");
-						tipoPagoBoleta =4;
-						$("#cuotas").text(pago.installmentsNumber);
-						}else{
-						$("#tipoTarjeta").text("Credito");
-						if (pago.installmentsNumber==0 || pago.installmentsNumber==""){
-							$("#cuotas").text(1);
-						}else{													
+				console.log();
+				if (orders.orders[0].current_state == 3) {
+					if (detalle[0].product_ean13 == null) {
+						alert("Error al obtener Productos");
+						$("#gif").hide();
+					}else{
+						limpiarTabla();
+						// Cliente y Direccion
+						$("#lblRut").text(rutFormat);
+						$("#lblNombre").text(direccion.firstname + " " + direccion.lastname);
+						$("#lblCiudad").text(direccion.city);
+						$("#lblDireccion").text(direccion.address1);
+						$("#lblEmail").text(cliente.email);
+						$("#lblFono").text(direccion.vat_number);
+	
+						//Pagos
+	
+						if(pago.paymentTypeCode=='VD'|| pago.paymentTypeCode=='' ){
+							$("#tipoTarjeta").text("Debito");
+							tipoPagoBoleta =4;
 							$("#cuotas").text(pago.installmentsNumber);
-						}
-						tipoPagoBoleta =3;
-					}
-						$("#numeroTarjeta").text(pago.cardDetail.card_number);
-						$("#codAut").text(pago.authorizationCode);
-					
-						//Detalle Orden
-						
-											
-						detalle.forEach(async (i, idx, array) => {
-							
-							try {
-
-							const stocki = await $.post('scripts/apiPrestaShop/obtenerStock.php', {sku: i.product_ean13, upc: i.product_upc}, function(resStock){
-								let stock = JSON.parse(resStock);
-								
-								total = total + Number(i.total_price_tax_incl)*Number(i.product_quantity);
-								tablaProdVOrig[idx]= Number(i.total_price_tax_incl);
-								var color;
-								
-								if(Number(i.product_quantity) > stock[0].stock){
-									color = 'red'; //marco en rojo lo que no tiene stock
-									flag = true; // deshabilito el boton imprimir para evitar impresion erronea.
-								}else {
-									color ='#B0F36E';
-								}
-								$("#tabla tbody").append('<tr>'+
-									'<td style ="font-size:15px;background-color:'+color+'"><center>'+i.product_ean13+'</center></td>'+
-									'<td style ="font-size:12px;background-color:'+color+'"><center>'+i.product_name+'</center></td>'+
-									//'<td style ="font-size:15px;"><center>'+resProductos[i]['marca']+'</center></td>'+
-									'<td style ="font-size:15px;background-color:'+color+'"><center>'+i.product_quantity+'</center></td>'+
-									'<td style ="font-size:15px;background-color:'+color+'"><center>'+Number(i.total_price_tax_incl)+'</center></td>'+
-									'<td style ="font-size:15px;background-color:'+color+'"><center>'+stock[0].stock+'</center></td>'+
-									'</tr>');
-							})
-							// console.log("flag" + flag);
-							numeroPedido = orders.orders[0].id_order;
-							fechaCreacion = orders.orders[0].date_add;
-							if (flag) {
-								$('#btn_Imprimir').attr("disabled", true);
-							} else {
-
-								$("#btn_Imprimir").attr( "disabled", false );
+							}else{
+							$("#tipoTarjeta").text("Credito");
+							if (pago.installmentsNumber==0 || pago.installmentsNumber==""){
+								$("#cuotas").text(1);
+							}else{													
+								$("#cuotas").text(pago.installmentsNumber);
 							}
-							$("#txt_total").text(Number(orders.orders[0].total_paid));					
-							$("#txt_totalFlete").text(Number(orders.orders[0].total_shipping));
-							$("#gif").hide();
-						
-						// console.log(idx + " " + tablaProdVOrig[idx]);
-							
-						} catch (error) {
-							console.error(error);
+							tipoPagoBoleta =3;
 						}
+							$("#numeroTarjeta").text(pago.cardDetail.card_number);
+							$("#codAut").text(pago.authorizationCode);
 						
-														
-						}); //aqui
-					flag = false;			
+							//Detalle Orden
+							
+												
+							detalle.forEach(async (i, idx, array) => {
+								
+								try {
+	
+								const stocki = await $.post('scripts/apiPrestaShop/obtenerStock.php', {sku: i.product_ean13, upc: i.product_upc}, function(resStock){
+									let stock = JSON.parse(resStock);
+									
+									total = total + Number(i.total_price_tax_incl)*Number(i.product_quantity);
+									tablaProdVOrig[idx]= Number(i.total_price_tax_incl);
+									var color;
+									
+									if(Number(i.product_quantity) > stock[0].stock){
+										color = 'red'; //marco en rojo lo que no tiene stock
+										flag = true; // deshabilito el boton imprimir para evitar impresion erronea.
+									}else {
+										color ='#B0F36E';
+									}
+									$("#tabla tbody").append('<tr>'+
+										'<td style ="font-size:15px;background-color:'+color+'"><center>'+i.product_ean13+'</center></td>'+
+										'<td style ="font-size:12px;background-color:'+color+'"><center>'+i.product_name+'</center></td>'+
+										//'<td style ="font-size:15px;"><center>'+resProductos[i]['marca']+'</center></td>'+
+										'<td style ="font-size:15px;background-color:'+color+'"><center>'+i.product_quantity+'</center></td>'+
+										'<td style ="font-size:15px;background-color:'+color+'"><center>'+Number(i.total_price_tax_incl)+'</center></td>'+
+										'<td style ="font-size:15px;background-color:'+color+'"><center>'+stock[0].stock+'</center></td>'+
+										'</tr>');
+								})
+								// console.log("flag" + flag);
+								numeroPedido = orders.orders[0].id_order;
+								fechaCreacion = orders.orders[0].date_add;
+								if (flag) {
+									$('#btn_Imprimir').attr("disabled", true);
+								} else {
+	
+									$("#btn_Imprimir").attr( "disabled", false );
+								}
+								$("#txt_total").text(Number(orders.orders[0].total_paid));					
+								$("#txt_totalFlete").text(Number(orders.orders[0].total_shipping));
+								$("#gif").hide();
+							
+							// console.log(idx + " " + tablaProdVOrig[idx]);
+								
+							} catch (error) {
+								console.error(error);
+							}
+							
+															
+							}); //aqui
+						flag = false;			
+					}
+				} else {
+					alert("Este pedido ya fue impreso.")
+					$("#gif").hide();
 				}
+				
 			}
             
         } catch (error) {

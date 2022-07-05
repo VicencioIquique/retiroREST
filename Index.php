@@ -49,7 +49,7 @@
                         <div class="col-md-12">
 							<div class="col-lg-6" style ='margin-bottom:2%;'>
 									<input class ='col-lg-4' id="txt_idPedido"type="text" placeholder="Codigo" required="" autofocus="true" style ="height:30px;font-size:20px;">
-									<button id ="btn_buscar"class="btn btn-md btn-primary col-lg-offset-1 col-lg-3" type="button" style =""> <span class="glyphicon glyphicon-search"></span>Buscar</button>
+									<button id ="btn_buscar"class="btn btn-md btn-primary col-lg-offset-1 col-lg-3" type="button" > <span class="glyphicon glyphicon-search"></span>Buscar</button>
 									<img class ='col-lg-3' style ='margin-top:-20px;'src="img/loading.gif" id ="gif">
 							</div>
 							<div class="col-lg-6" style ='margin-top:0%;'>
