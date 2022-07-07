@@ -30,8 +30,8 @@ $(document).ready(function(){
 			const orders = resp.data;
 			
 			const pago = JSON.parse(Object.values(orders.orders[0].ps_webpay_rest_transaction));
-            // console.log(pago);
 			const detalle = (orders.orders[0].ps_order_details);
+            console.log(detalle);
 			const direccion = (orders.orders[0].ps_address);
 			const cliente = (orders.orders[0].ps_customer);
 			
@@ -74,55 +74,67 @@ $(document).ready(function(){
 							$("#codAut").text(pago.authorizationCode);
 						
 							//Detalle Orden
+
+							let stockArray = detalle.map(async (producto, i) =>{
+								const res = await $.post('scripts/apiPrestaShop/obtenerStock.php', {sku: producto.product_ean13, upc: producto.product_upc})
+								// console.log(res); //res;
+								return JSON.parse(res)[0]
+							})
+							stockArray = await Promise.all(stockArray);
 							
-												
-							detalle.forEach(async (i, idx, array) => {
-								
-								try {
-	
-								const stocki = await $.post('scripts/apiPrestaShop/obtenerStock.php', {sku: i.product_ean13, upc: i.product_upc}, function(resStock){
-									let stock = JSON.parse(resStock);
-									
-									total = total + Number(i.total_price_tax_incl)*Number(i.product_quantity);
-									tablaProdVOrig[idx]= Number(i.total_price_tax_incl);
+							// const prom = await Promise.all(
+
+								detalle.forEach( (det, idx) => {
+									console.log(det.product_ean13)
+									try {
+		
+									// const stocki = await $.post('scripts/apiPrestaShop/obtenerStock.php', {sku: det.product_ean13, upc: det.product_upc}, function(resStock){
+									// 	let stock = JSON.parse(resStock);
+									// 	console.log("flag" + stock[0].stock);
+									// 	return stock
+									// })
+
+									total = total + Number(det.total_price_tax_incl)*Number(det.product_quantity);
+									tablaProdVOrig[idx]= Number(det.total_price_tax_incl);
 									var color;
 									
-									if(Number(i.product_quantity) > stock[0].stock){
+									if(Number(det.product_quantity) > stockArray[idx].stock){
 										color = 'red'; //marco en rojo lo que no tiene stock
 										flag = true; // deshabilito el boton imprimir para evitar impresion erronea.
 									}else {
 										color ='#B0F36E';
 									}
 									$("#tabla tbody").append('<tr>'+
-										'<td style ="font-size:15px;background-color:'+color+'"><center>'+i.product_ean13+'</center></td>'+
-										'<td style ="font-size:12px;background-color:'+color+'"><center>'+i.product_name+'</center></td>'+
+										'<td style ="font-size:15px;background-color:'+color+'"><center>'+det.product_ean13+'</center></td>'+
+										'<td style ="font-size:12px;background-color:'+color+'"><center>'+det.product_name+'</center></td>'+
 										//'<td style ="font-size:15px;"><center>'+resProductos[i]['marca']+'</center></td>'+
-										'<td style ="font-size:15px;background-color:'+color+'"><center>'+i.product_quantity+'</center></td>'+
-										'<td style ="font-size:15px;background-color:'+color+'"><center>'+Number(i.total_price_tax_incl)+'</center></td>'+
-										'<td style ="font-size:15px;background-color:'+color+'"><center>'+stock[0].stock+'</center></td>'+
+										'<td style ="font-size:15px;background-color:'+color+'"><center>'+det.product_quantity+'</center></td>'+
+										'<td style ="font-size:15px;background-color:'+color+'"><center>'+Number(det.total_price_tax_incl)+'</center></td>'+
+										'<td style ="font-size:15px;background-color:'+color+'"><center>'+stockArray[idx].stock+'</center></td>'+
 										'</tr>');
-								})
-								// console.log("flag" + flag);
-								numeroPedido = orders.orders[0].id_order;
-								fechaCreacion = orders.orders[0].date_add;
-								if (flag) {
-									$('#btn_Imprimir').attr("disabled", true);
-								} else {
-	
-									$("#btn_Imprimir").attr( "disabled", false );
-								}
-								$("#txt_total").text(Number(orders.orders[0].total_paid));					
-								$("#txt_totalFlete").text(Number(orders.orders[0].total_shipping));
-								$("#gif").hide();
-							
-							// console.log(idx + " " + tablaProdVOrig[idx]);
+
+									numeroPedido = orders.orders[0].id_order;
+									fechaCreacion = orders.orders[0].date_add;
+									if (flag) {
+										$('#btn_Imprimir').attr("disabled", true);
+									} else {
+		
+										$("#btn_Imprimir").attr( "disabled", false );
+									}
+									$("#txt_total").text(Number(orders.orders[0].total_paid));					
+									$("#txt_totalFlete").text(Number(orders.orders[0].total_shipping));
+									$("#gif").hide();
 								
-							} catch (error) {
-								console.error(error);
-							}
+								// console.log(idx + " " + tablaProdVOrig[idx]);
+									
+								} catch (error) {
+									console.error(error);
+								}
+								
+																
+								}) //aqui
 							
-															
-							}); //aqui
+							
 						flag = false;			
 					}
 				} else {
@@ -251,6 +263,7 @@ $(document).ready(function(){
 		//---------------------------------------------------------------FISCAL------------------------------------------------------------------------------
 		var itemProductos ='';
 		for (var i =0;i<tablaProdCodigo.length;i++){ // asignar productos a un string para poder imprimirlos en la Fiscal
+			console.log(i + " " + tablaProdVOrig[i]);
 			itemProductos = itemProductos
 								+'<Item>'+'<Codigo></Codigo>'+
 								'<Descripcion>'+tablaProdCodigo[i]+' '+tablaProdDescripcion[i]+'</Descripcion>'+
@@ -372,9 +385,9 @@ $(document).ready(function(){
 					};
 					console.log("tablaProdAluSplit " + jsonBoletaDetalle.tablaProdAluSplit);
 					console.log("tablaProdVOrigSplit " + jsonBoletaDetalle.tablaProdVOrigSplit);
-						var cdCuent;
-						var tipoPag;
-						var desc4;
+						var cdCuent = '';
+						var tipoPag = '';
+						var desc4 = '';
 						if($("#tipoTarjeta").text()=='Debito'){
 							cdCuent='WP_TD';
 							tipoPag='WEBPAYDEBITO';
