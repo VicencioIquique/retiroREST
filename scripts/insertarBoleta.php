@@ -324,6 +324,7 @@
 		
 	$secuenciaPagos = 0;
 	//echo "\nINSERCION DE PAGOS\n";
+		echo $jsonBoletaPagos;
 		$sqlInsertarPagos = 
 			"INSERT INTO RP_VICENCIO.dbo.RP_ReceiptsPagos_SAP
 			VALUES('".$jsonBoletaPagos['bodega']."',
@@ -346,7 +347,7 @@
 			exit( "Error en la inserción de Pagos" );
 			echo( "Error en la inserción de Pagos" );
 		}
-		//echo $sqlInsertarPagos;
+		echo "Insert Pagos".$sqlInsertarPagos;
 	//FIN INSERTAR PAGOS
 		
 	//Actualizar ultimo folio de los documentos
