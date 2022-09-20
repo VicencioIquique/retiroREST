@@ -6,6 +6,7 @@ $fecha=$_POST["fecha"];
 	$sql = "SELECT case cab.TipoDocto
     when 1 then 'Boleta Fiscal'
     when 99 then 'Nula'
+    when 4 then 'Boleta Manual'
     end as TipoDocto,
     cab.BillToCompany as Pedido,
     cab.NumeroDocto,
