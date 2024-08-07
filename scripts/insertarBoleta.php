@@ -60,7 +60,7 @@
 		@$fechaCreacion = date('Y-m-d H:i:s');
 		
 		//Factor temporal para el cálculo de la retenciónDL
-		$factor = 0.0041;
+		$factor = 0.0035; //update 31.03.24
 		
 		//Secuencia para inserción en tabla Detalle
 		$secuencia = 1;
@@ -324,7 +324,8 @@
 		
 	$secuenciaPagos = 0;
 	//echo "\nINSERCION DE PAGOS\n";
-		echo $jsonBoletaPagos;
+		//echo "JSON ".$jsonBoletaPagos;
+		//echo "<script>console.log('" . json_encode($jsonBoletaPagos) . "');</script>";
 		$sqlInsertarPagos = 
 			"INSERT INTO RP_VICENCIO.dbo.RP_ReceiptsPagos_SAP
 			VALUES('".$jsonBoletaPagos['bodega']."',
@@ -347,7 +348,7 @@
 			exit( "Error en la inserción de Pagos" );
 			echo( "Error en la inserción de Pagos" );
 		}
-		echo "Insert Pagos".$sqlInsertarPagos;
+		//echo "Insert Pagos ".$sqlInsertarPagos;
 	//FIN INSERTAR PAGOS
 		
 	//Actualizar ultimo folio de los documentos

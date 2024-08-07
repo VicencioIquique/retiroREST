@@ -58,11 +58,11 @@ $(document).ready(function(){
 						//Pagos
 	
 						if(pago.paymentTypeCode=='VD'|| pago.paymentTypeCode=='' ){
-							$("#tipoTarjeta").text("Debito");
+							$("#tipoTarjeta").text("Débito");
 							tipoPagoBoleta =4;
 							$("#cuotas").text(pago.installmentsNumber);
 							}else{
-							$("#tipoTarjeta").text("Credito");
+							$("#tipoTarjeta").text("Crédito");
 							if (pago.installmentsNumber==0 || pago.installmentsNumber==""){
 								$("#cuotas").text(1);
 							}else{													
@@ -85,7 +85,7 @@ $(document).ready(function(){
 							// const prom = await Promise.all(
 
 								detalle.forEach( (det, idx) => {
-									console.log(det.product_ean13)
+									// console.log(det.product_ean13)
 									try {
 		
 									// const stocki = await $.post('scripts/apiPrestaShop/obtenerStock.php', {sku: det.product_ean13, upc: det.product_upc}, function(resStock){
@@ -93,9 +93,9 @@ $(document).ready(function(){
 									// 	console.log("flag" + stock[0].stock);
 									// 	return stock
 									// })
-
-									total = total + Number(det.total_price_tax_incl)*Number(det.product_quantity);
-									tablaProdVOrig[idx]= Number(det.total_price_tax_incl);
+									
+									total = total + Math.round(Number(det.total_price_tax_incl))//*Number(det.product_quantity);
+									tablaProdVOrig[idx]= Math.round(Number(det.unit_price_tax_incl));
 									var color;
 									
 									if(Number(det.product_quantity) > stockArray[idx].stock){
@@ -133,7 +133,7 @@ $(document).ready(function(){
 								
 																
 								}) //aqui
-							
+								console.log("TOTAL: " + total)
 							
 						flag = false;			
 					}
@@ -383,16 +383,16 @@ $(document).ready(function(){
 						Status:2,
 						baseEntry:''
 					};
-					console.log("tablaProdAluSplit " + jsonBoletaDetalle.tablaProdAluSplit);
-					console.log("tablaProdVOrigSplit " + jsonBoletaDetalle.tablaProdVOrigSplit);
-						var cdCuent = '';
-						var tipoPag = '';
-						var desc4 = '';
-						if($("#tipoTarjeta").text()=='Debito'){
+					//console.log("tablaProdAluSplit " + jsonBoletaDetalle.tablaProdAluSplit);
+					//console.log("tablaProdVOrigSplit " + jsonBoletaDetalle.tablaProdVOrigSplit);
+						var cdCuent;
+						var tipoPag;
+						var desc4;
+						if($("#tipoTarjeta").text()=='Débito'){
 							cdCuent='WP_TD';
 							tipoPag='WEBPAYDEBITO';
 							desc4 ='1';
-						}else if ($("#tipoTarjeta").text()=='Credito'){
+						}else if ($("#tipoTarjeta").text()=='Crédito'){
 							cdCuent='WP_TC';
 							tipoPag='WEBPAYCREDITO';
 							desc4 ='2';
@@ -417,6 +417,9 @@ $(document).ready(function(){
 					};
 					var aux = 0;
 					var idCompra = $("#txt_idPedido").val();
+					console.log(jsonBoletaPagos);
+					alert(jsonBoletaPagos);
+					
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
 						$.post("scripts/insertarBoleta.php",{jsonBoletaDetalle:jsonBoletaDetalle, jsonBoletaCabecera: jsonBoletaCabecera, jsonBoletaPagos:jsonBoletaPagos},function(res){
 							// console.log((res));
